@@ -57,6 +57,7 @@ class IntrinsicsPoseToProjection(object):
         for frame in data['frames']:
             intrinsics = frame.pop('intrinsics')
             pose = frame.pop('pose')
+            # pose is c2w
             frame['projection'] = intrinsics @ pose.inverse()[:3,:]
         return data
 
@@ -168,7 +169,7 @@ def transform_space(data, transform, voxel_dim, origin):
         # compute voxel_dim for this voxel_size
         scale = voxel_size/min(voxel_sizes)
         vd = [int(vd/scale) for vd in voxel_dim]
-        key = 'vol_%02d'%voxel_size
+        key = 'vol_%02d' % voxel_size
 
         # do transform
         data[key] = data[key].transform(transform, vd, origin)

@@ -60,8 +60,8 @@ def backproject(voxel_dim, voxel_size, origin, projection, features):
 
     coords = coordinates(voxel_dim, device).unsqueeze(0).expand(batch,-1,-1) # bx3xhwd
     world = coords.type_as(projection) * voxel_size + origin.to(device).unsqueeze(2)
-    world = torch.cat((world, torch.ones_like(world[:,:1]) ), dim=1)
-    
+    world = torch.cat((world, torch.ones_like(world[:,:1]) ), dim=1)  # bx4xhwd
+    # bx3xhwd = bx3x4 @ bx4xhwd
     camera = torch.bmm(projection, world)
     px = (camera[:,0,:]/camera[:,2,:]).round().type(torch.long)
     py = (camera[:,1,:]/camera[:,2,:]).round().type(torch.long)
@@ -85,6 +85,10 @@ def backproject(voxel_dim, voxel_size, origin, projection, features):
 
 class VoxelNet(pl.LightningModule):
     """ Network architecture implementing ATLAS (https://arxiv.org/pdf/2003.10432.pdf)"""
+
+    @property
+    def hparams(self):
+        return self._hparams
 
     def __init__(self, hparams):
         super().__init__()
@@ -448,6 +452,10 @@ class VoxelNet(pl.LightningModule):
                 'optimizer %s not supported'%self.cfg.OPTIMIZER.TYPE)
                 
         return optimizers, schedulers
+
+    @hparams.setter
+    def hparams(self, value):
+        self._hparams = value
 
 
 

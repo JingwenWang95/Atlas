@@ -42,7 +42,7 @@ def process(info_file, model, num_frames, save_path, total_scenes_index, total_s
                            voxel_types=model.voxel_types, num_frames=num_frames)
 
     # compute voxel origin
-    if 'file_name_vol_%02d'%voxel_scale in dataset.info:
+    if 'file_name_vol_%02d' % voxel_scale in dataset.info:
         # compute voxel origin from ground truth
         tsdf_trgt = dataset.get_tsdf()['vol_%02d'%voxel_scale]
         voxel_size = float(voxel_scale)/100
@@ -53,12 +53,13 @@ def process(info_file, model, num_frames, save_path, total_scenes_index, total_s
     else:
         # use default origin
         # assume floor is a z=0 so pad bottom a bit
-        offset = torch.tensor([0,0,-.5])
+        # offset = torch.tensor([0,0,-.5])
+        offset = torch.tensor([-2., -1.5, -1.3])
     T = torch.eye(4)
     T[:3,3] = offset
 
     transform = transforms.Compose([
-        transforms.ResizeImage((640,480)),
+        transforms.ResizeImage((640, 480)),
         transforms.ToTensor(),
         transforms.TransformSpace(T, model.voxel_dim_val, [0,0,0]),
         transforms.IntrinsicsPoseToProjection(),

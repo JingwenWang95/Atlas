@@ -27,6 +27,7 @@ from atlas.data import SceneDataset, load_info_json
 from atlas.datasets.scannet import prepare_scannet_scene, prepare_scannet_splits
 from atlas.datasets.rio import prepare_rio_scene
 from atlas.datasets.sample import prepare_sample_scene
+from atlas.datasets.ICL import prepare_ICL_scene
 import atlas.transforms as transforms
 from atlas.tsdf import TSDFFusion, TSDF, coordinates, depth_to_world
 
@@ -342,6 +343,14 @@ if __name__ == "__main__":
             args.test,
             args.max_depth
         )
+    elif args.dataset == "ICL":
+        scenes = ['living_room_traj2_frei']
+        for scene in scenes:
+            prepare_ICL_scene(
+                scene,
+                os.path.join(args.path, 'ICL'),
+                os.path.join(args.path_meta, 'ICL'),
+            )
 
     # elif args.dataset == 'rio':
     #     prepare_rio(
